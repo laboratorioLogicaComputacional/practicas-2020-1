@@ -1,0 +1,135 @@
+#+LATEX_CLASS: article
+#+LANGUAGE: es
+#+LATEX_HEADER: \usepackage[AUTO]{babel}
+#+LATEX_HEADER: \usepackage{fancyvrb}
+#+OPTIONS: toc:nil
+#+DATE:
+#+AUTHOR: Dr. Miguel Carrillo Barajas \\
+#+AUTHOR: Sara Doris Montes Incin \\
+#+AUTHOR: Mauricio Esquivel Reyes \\
+#+TITLE: Práctica 01 \\
+#+TITLE: Lógica Computacional \\
+#+TITLE: Universidad Nacional Autónoma de México
+* Estructuras
+** Naturales
+Consideremos la siguiente representación de los números naturales
+
+#+begin_src haskell
+data Natural = Cero | Suc Natural deriving (Eq, Show)
+#+end_src
+*** mayorQue :: Natural -> Natural -> Bool
+Dados dos naturales nos dice si el primero es mayor que el segundo.\\
+Ejemlos:
+ * Main> mayorQue Cero (Suc Cero)\\
+   False
+ * Main> mayorQue (Suc Cero) Cero\\
+   True
+*** menorQue :: Natural -> Natural -> Bool
+Dados dos naturales nos dice si el primero es menor que el segundo.\\
+Ejemlos:
+ * Main> menorQue Cero (Suc Cero)\\
+   True
+ * Main> menorQue (Suc Cero) Cero\\
+   False
+*** igual :: Natural -> Natural -> Bool
+Dados dos naturales nos dice si son iguales.\\
+Ejemplos:
+ * Main> igual Cero (Suc Cero)\\
+   False
+ * Main> igual (Suc Cero) (Suc Cero)\\
+   True
+** Lista de naturales
+Consideremos la siguiente definición de las listas de naturales.
+#+begin_src haskell
+data ListaDeNaturales = Nil | Cons Natural ListaDeNaturales
+#+end_src
+*** concate :: ListaDeNaturales -> ListaDeNaturales -> ListaDeNaturales
+Dadas dos listas de naturales regresar la concatenación de ambas.\\
+Ejemplos:
+ * Main> concate (Cons (Suc Cero) Nil) (Cons Cero (Cons (Suc (Suc Cero)) Nil))\\
+   Cons (Suc Cero) (Cons Cero (Cons (Suc (Suc Cero)) Nil))
+ * Main> concate (Cons Cero (Cons (Suc (Suc Cero)) Nil)) (Cons (Suc Cero) Nil)\\
+   Cons Cero (Cons (Suc (Suc Cero)) (Cons (Suc Cero) Nil))
+*** reversa :: ListaDeNaturales -> ListaDeNaturales
+Dada una lista regresar la reversa de dicha lista.\\
+Ejemplos:
+ * Main> reversa (Cons Cero (Cons (Suc (Suc Cero)) (Cons (Suc Cero) Nil)))\\
+   Cons (Suc Cero) (Cons (Suc (Suc Cero)) (Cons Cero Nil))
+* Lógica Proposicional
+Consideremos la siguiente representación de la lógica proposicional.
+#+begin_src haskell
+-- Tipo de dato indice
+type Indice = Int
+
+-- Tipo de dato fórmula
+data PL = Top | Bot  | Var Indice
+              | Oneg PL 
+              | Oand PL PL | Oor PL PL 
+              | Oimp PL PL deriving (Eq, Show)
+#+end_src
+** hayImplicacion :: PL -> Bool
+Dada una fórmula regresa un valor de verdad si hay una implicación en dicha fórmula.\\
+Ejemplo:
+ * Main> hayImplicacion Oor (Var 1) (Oimp (Var 2) (Var 3))\\
+   True
+** disy :: PL -> [PL]
+Dada una fórmula regresar una lista con las disyunciones de dicha fórmula.\\
+Ejemplo: 
+ * Main> disy Oand (Oor (Var 1) Oneg $ Var 2) (Oor Bot (Var 3))\\
+   [Oor (Var 1) Oneg $ Var 2, Oor Bot (Var 3)]
+** numConj :: PL -> Int
+Dada una fórmula regresar el número de conjunciones que tiene dicha fórmula.\\
+Ejemplo:
+ * Main> numConj Oand (Oor (Var 1) Oneg $ Var 2) (Oand Top (Var 3))\\
+   2
+* Sistema L de Lukasiewicz 
+Un sistema de deducción al estilo Hilbert para la PLI. Se utilizarán los archivos SintaxisPLI.hs, DeduccionL.hs y DeduccionLEjemplos.hs.
+** Definición 
+\[PLI ::= Bot | v<Indice> | (PLI \to PLI) \]
+\[ <Indice> ::= [i | i \in \mathbb{N}]\]
+
+Sea $\phi \in PLI$. La negación de \phi se define mediante $\neg \phi = (\phi \to Bot)$
+
+** Axiomas
+Axiomas para toda $\alpha$, $\beta$ y $\gamma$ en PLI:
+ * L1. $\alpha \to (\beta \to \alpha)$
+ * L2. $(\alpha \to (\beta \to \gamma)) \to ((\alpha \to \beta) \to (\alpha \to \gamma))$
+ * L3. $(\neg \alpha \to \neg \beta) \to (\beta \to \alpha)$
+** Modus Ponens
+El Modus Ponens es una regla de inferencia de la lógica proposicional. Se puede resumir como:
+Si $\alpha \to \beta$ y $\alpha$ es verdad entonces se puede inferir que $\beta$ también es verdad.
+** Deducciones en el Sistema L.
+Def. Sean $\phi \in$ PLI y $\Gamma \subset$ PLI.
+
+Decimos que $\phi$ se deduce de $\Gamma$ en el sistema L, $\Gamma \vdash \phi$ si existe una
+lista finita de formulas $\gamma_1,\gamma_2,\dots,\gamma_n \in$ PLI, tal que:
+ * $\gamma_n = \phi$
+ * Para toda $k \in {1,\dots,n}$ se cumplen:
+  * $\gamma_k \in \Gamma$ (premisa)
+  * $\gamma_k$ es una instancia de un axioma de L.
+  * Existe $i,j < k$ tales que $\gamma_k$ es resultado de aplicar MP a $\gamma_i$ y $\gamma_j$. (MP i,j)
+
+** Funciones
+Desarrolla las siguientes funciones en donde sean necesarias.
+*** esAxL1 :: PLI -> Bool
+Función que nos dice si una fórmula de PLI cumple el axioma 1.\\
+Ejemplo:
+ * Main> esAxL1 (Var 1) `Oimp` ((Var 2) `Oimp` (Var 1))
+   True
+*** esAxL2
+Función que regresa el resultado de verificar que una fórmula de PLI cumple el axioma 2.\\
+Ejemplo:
+ * Main> esAxL2 (Bot) `Oimp` ((Var 1) `Oimp` (Var 2))
+   False
+*** esAxL3
+Función que decide si la fórmula dada de PLI cumple el axioma 3.\\
+Ejemplo: 
+ * Main> esAxL3 (((Var 1) `Oimp` Bot) `Oimp` ((Var 2) `Oimp` Bot)) `Oimp` ((Var 2) `Oimp` (Var 1))\\
+   True
+*** esAxiomaDeL
+Función que indica si una fórmula de PLI es una instancia de los axiomas.\\
+Ejemplo:
+ * Main> esAxiomaDeL (Var 2) `Oimp` ((Var 3) `Oimp` (Var 2))
+   True
+*** esModusPonens
+Función que recibe una tripleta de fórmulas, nos dice si la última formula es resultado de hacer MP con las anteriores. 
