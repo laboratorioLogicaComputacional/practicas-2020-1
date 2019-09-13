@@ -11,30 +11,26 @@ import SintaxisPLI
 -- Función que nos dice si una formula de PLI cumple el Axioma 1
 esAxL1 :: PLI -> Bool
 esAxL1 phi = case phi of
-  (alpha `Oimp` (_ `Oimp` beta)) -> alpha == beta
-  _                              -> False
+  _ -> error $ "Se necesita implementar."
 
 -- Función que nos dice si una formula de PLI cumple el Axioma 2
 esAxL2 :: PLI -> Bool
 esAxL2 phi = case phi of
-  (alpha `Oimp` (beta `Oimp` gamma)) `Oimp` ((delta `Oimp` epsilon) `Oimp` (zeta `Oimp` eta)) -> (alpha == delta && delta == zeta) && (beta == epsilon) && (gamma == eta)
-  _                              -> False
+  _ -> error $ "Se necesita implementar."
 
 -- Función que nos dice si una formula de PLI cumple el Axioma 3
 esAxL3 :: PLI -> Bool
 esAxL3 phi = case phi of
-  ((alpha `Oimp` Bot) `Oimp` (beta `Oimp` Bot)) `Oimp` (gamma `Oimp` delta) -> alpha == gamma && beta == delta
-  _                              -> False
+  _ -> error $ "Se necesita implementar."
 
 -- Función que nos dice si una formula es una Axioma del sistema L
 esAxiomaDeL :: PLI -> Bool
-esAxiomaDeL phi = esAxL1 phi || esAxL2 phi || esAxL3 phi
+esAxiomaDeL phi = error $ "Se necesita implementar."
 
 -- Función que nos dice si se aplico de manera correcta Modus Ponens
 esModusPonens :: (PLI, PLI, PLI) -> Bool
 esModusPonens (phi, chi, psi) = case (phi, chi, psi) of
-  (alpha, beta `Oimp` gamma, delta) -> (alpha == beta) && (gamma == delta) 
-  _ -> False
+  _ -> error $ "Se necesita implementar."
 
 -- Reglas del sistema L
 data ReglaL = Prem           -- Las premisas son validas
@@ -67,8 +63,8 @@ ultimoPaso lpasos
 -- Revisa que el paso sea correcto
 checkPaso :: [PLI] -> [NumPaso] -> NumPaso -> Bool
 checkPaso lprem lpp p = case p of
-  (n, (phi, Prem)) -> phi `elem` lprem && n == nU+1 -- Revisamos que phi sea parte de lprem
-  (n, (phi, Ax)) -> esAxiomaDeL phi && n == nU+1 -- Revisamos que phi sea un axioma
+  (n, (phi, Prem)) -> error $ "Se necesita implementar." -- Revisamos que phi sea parte de lprem
+  (n, (phi, Ax)) -> error $ "Se necesita implementar." -- Revisamos que phi sea un axioma
   (n, (phi, ModPon i j)) -> esModusPonens (alpha, beta, phi) && n == nU+1 -- Revisamos que phi sea resultado de hacer modus ponens con i y j
     where
       alpha = phiPasoNum i lpp
@@ -120,7 +116,7 @@ showLpasos fSize lprem prevLp lpasos = case lpasos of
     putStrLn $ showNumPasoCheck fSize p (checkPaso lprem prevLp p)
     showLpasos fSize lprem (prevLp++[p]) lps
 
-
+-- Muestra el resultado de la prueba realizada.
 showCheckConclusion :: [PLI] -> [NumPaso] -> PLI -> IO ()
 showCheckConclusion lpremisas lpasos phi =
   do
@@ -137,11 +133,11 @@ showCheckConclusion lpremisas lpasos phi =
         then "{" ++ showLphi lpremisas ++"}"
         else ""
         
---
+-- Función que nos regresa el elemento más grande.
 maxL :: Ord a => [a] -> a
 maxL = foldr1 (\x y ->if x >= y then x else y)
---
 
+-- Revisa si los pasoso son correctos y el resultado de la prueba realizada.
 esDeduccionEnL :: [PLI] -> [NumPaso] -> PLI -> IO()
 esDeduccionEnL lpremisas lpasos phi =
   do

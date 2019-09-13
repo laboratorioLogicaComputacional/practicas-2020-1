@@ -132,4 +132,13 @@ Ejemplo:
  * Main> esAxiomaDeL (Var 2) `Oimp` ((Var 3) `Oimp` (Var 2))
    True
 *** esModusPonens
-Función que recibe una tripleta de fórmulas, nos dice si la última formula es resultado de hacer MP con las anteriores. 
+Función que recibe una tripleta de fórmulas, nos dice si la última formula es resultado de hacer MP con las anteriores.\\
+Ejemplo: 
+ * Main> esModusPonens (Var 1, ((Var 1) `Oimp` (Var 2)), Var 2)
+   True
+*** checkPaso
+Hay que implementar los casos faltantes. 
+**** Prem
+Debe revisar que la fórmula sea parte de las premisas.
+**** Ax 
+Debe revisar que la fórmula sea una instancia de un axioma.
