@@ -116,22 +116,22 @@ Función que nos dice si una fórmula de PLI cumple el axioma 1.\\
 Ejemplo:
  * Main> esAxL1 (Var 1) `Oimp` ((Var 2) `Oimp` (Var 1))
    True
-*** esAxL2
+*** esAxL2 :: PLI -> Bool
 Función que regresa el resultado de verificar que una fórmula de PLI cumple el axioma 2.\\
 Ejemplo:
  * Main> esAxL2 (Bot) `Oimp` ((Var 1) `Oimp` (Var 2))
    False
-*** esAxL3
+*** esAxL3 :: PLI -> Bool
 Función que decide si la fórmula dada de PLI cumple el axioma 3.\\
 Ejemplo: 
  * Main> esAxL3 (((Var 1) `Oimp` Bot) `Oimp` ((Var 2) `Oimp` Bot)) `Oimp` ((Var 2) `Oimp` (Var 1))\\
    True
-*** esAxiomaDeL
+*** esAxiomaDeL :: PLI -> Bool
 Función que indica si una fórmula de PLI es una instancia de los axiomas.\\
 Ejemplo:
  * Main> esAxiomaDeL (Var 2) `Oimp` ((Var 3) `Oimp` (Var 2))
    True
-*** esModusPonens
+*** esModusPonens :: PLI -> Bool
 Función que recibe una tripleta de fórmulas, nos dice si la última formula es resultado de hacer MP con las anteriores.\\
 Ejemplo: 
  * Main> esModusPonens (Var 1, ((Var 1) `Oimp` (Var 2)), Var 2)
