@@ -53,10 +53,10 @@ disy phi = case phi of
   Top -> []
   Bot -> []
   Var _ -> []
-  Oneg alpha -> conj phi
-  Oand alpha beta -> conj alpha ++ conj beta
-  Oor alpha beta -> [Oor alpha beta] ++ conj alpha ++ conj beta
-  Oimp alpha beta -> conj alpha ++ conj beta
+  Oneg alpha -> disy alpha
+  Oand alpha beta -> disy alpha ++ disy beta
+  Oor alpha beta -> [Oor alpha beta] ++ disy alpha ++ disy beta
+  Oimp alpha beta -> disy alpha ++ disy beta
 
 numConj :: PL -> Int
 numConj phi = case phi of
