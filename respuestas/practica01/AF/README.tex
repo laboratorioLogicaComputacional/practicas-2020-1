@@ -1,0 +1,31 @@
+\documentclass{article}
+
+\title{Práctica 1}
+\date{2019-09-20}
+\author{
+  Luis Alfredo Lorenzo
+  \and
+  Luis Fernando Barocio
+}
+
+\begin{document}
+  \maketitle
+
+  La única complicación que se nos presentó fue que Haskell no permite 
+  repetir el nombre de las variables en los parametros. Eso nos hubiera
+  ayudado a simplificar el código usando solamente pattern matching.
+
+  \begin{verbatim}
+    esAxL1 :: PLI -> Bool
+    esAxL1 (Oimp alpha (Oimp betha alpha)) = True 
+    esAxL1 phi = False
+  \end{verbatim}
+
+  De cualquier forma, le dimos la vuelta a esa limitación de la siguiente forma:
+
+  \begin{verbatim}
+    esAxL1 :: PLI -> Bool
+    esAxL1 (Oimp alpha1 (Oimp betha alpha2)) = alpha1 == alpha2
+    esAxL1 phi = False
+  \end{verbatim}
+\end{document}
