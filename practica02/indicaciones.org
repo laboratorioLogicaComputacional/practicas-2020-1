@@ -1,0 +1,69 @@
+#+LATEX_CLASS: article
+#+LANGUAGE: es
+#+LATEX_HEADER: \usepackage[AUTO]{babel}
+#+LATEX_HEADER: \usepackage{fancyvrb}
+#+OPTIONS: toc:nil
+#+DATE:
+#+AUTHOR: Dr. Miguel Carrillo Barajas \\
+#+AUTHOR: Sara Doris Montes Incin \\
+#+AUTHOR: Mauricio Esquivel Reyes \\
+#+TITLE: Práctica 02 \\
+#+TITLE: Lógica Computacional \\
+#+TITLE: Universidad Nacional Autónoma de México
+
+
+* Lógica proposicional
+
+Consideremos la siguiente representación de la lógica proposicional:
+
+#+begin_src haskell
+--Tipo de datos para indices de variables
+type Indice = Int
+
+-- Tipo de datos para formulas de la PL
+data PL = Top | Bot | Var Indice 
+        | Oneg PL | Oand PL PL 
+        | Oor PL PL | Oimp PL PL deriving (Eq,Show,Ord)
+#+end_src
+
+** Formas Normales
+*** CNF
+**** esCNF :: PL -> Bool
+Dada una fórmula de la lógica proposicional revisa si se encuentra en forma normal conjutivo.
+Ejemplos:
+ * Main> esCNF (Oimp (Var 1) (Oand (Var 2)(Oor (Var 3)(Var 4))))\\
+ False
+ * Main> esCNF (Oand (Oor (Var 2) (Oneg $ Var 2))(Oor (Var 4)(Oor (Var 5)(Var 7)))) 
+ True
+**** toCNF :: PL -> PL
+Dada una fórmula en NNF y sin implicaciones, dar su CNF, tal que sean logicamente equivalentes.
+
+*** DNF 
+**** esTermino :: PL -> Bool
+Dada una fórmula de la lógica proposicional revisa si es un término. 
+Ejemplos:
+ * Main> esTermino $ Oand (Var 1) (Oor (Var 2) (Var 3))
+ False
+ * Main> esTermino $ Oand (Oand (Var 1) (Var 2)) (Oneg $ Var 3)
+ True
+
+**** esDNF :: PL -> Bool
+Dada una fórmula de la LP revisa si se encuentra en forma normal disyuntiva
+Ejemplos:
+ * Main> esDNF (Oor (Oand (Var 2) (Oneg $ Var 2))(Oand (Var 4)(Oand (Var 5)(Var 7)))) 
+ True
+ * Main> esDNF (Oor (Oand (Var 2) (Oneg $ Var 2))(Oand (Var 4)(Oor (Var 5)(Var 7))))
+ False
+
+** Deducción Natural
+*** Revisar las reglas
+
+En el archivo DeduccionNatural.hs implementar las siguientes funciones:
+
+1. checkIdis1
+2. checkIdis2
+3. checkE2neg
+
+*** Ejercicios
+
+Dar la deducción de los siguientes ejercicios
