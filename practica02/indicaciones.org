@@ -17,18 +17,30 @@
 Consideremos la siguiente representación de la lógica proposicional:
 
 #+begin_src haskell
---Tipo de datos para indices de variables
+-- Tipo de datos para indices de variables
 type Indice = Int
 
 -- Tipo de datos para formulas de la PL
 data PL = Top | Bot | Var Indice 
         | Oneg PL | Oand PL PL 
         | Oor PL PL | Oimp PL PL deriving (Eq,Show,Ord)
+
+-- Tipo de datos para modelos
+type Modelo = [Indice]
 #+end_src
 
+** Fórmulas
+*** Elimina disyunciones
+Dada una fórmula cambiar las instancias de las implicaciones.
+ * Main> eliminaDisy (Oimp (Var 1) (Var 2))
+ Oor (Oneg (Var 1)) (Var 2)
+ * Main> eliminaDisy (Oand (Top) (Bot))
+ Oand (Top) (Bot)
+*** Satisfacibilidad con modelos
+Dado un modelo y una fórmula de la lógica proposicional la función debe  
 ** Formas Normales
 *** CNF
-**** esCNF :: PL -> Bool
+**** Es CNf
 Dada una fórmula de la lógica proposicional revisa si se encuentra en forma normal conjutivo.
 Ejemplos:
  * Main> esCNF (Oimp (Var 1) (Oand (Var 2)(Oor (Var 3)(Var 4))))\\
