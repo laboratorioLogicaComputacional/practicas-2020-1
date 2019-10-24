@@ -30,11 +30,11 @@ type Modelo = [Indice]
 #+end_src
 
 ** Formas Normales
-*** Elimina disyunciones
+*** Elimina implicaciones
 Dada una fórmula cambiar las instancias de las implicaciones.
- * Main> eliminaDisy (Oimp (Var 1) (Var 2))
- Oor (Oneg (Var 1)) (Var 2)
- * Main> eliminaDisy (Oand Top Bot)
+ * Main> eliminaImp (Oimp (Var 1) (Var 2))
+ Oor (Oneg $ Var 1) (Var 2)
+ * Main> eliminaImp (Oand Top Bot)
  Oand Top Bot
 
 *** NNF
@@ -55,9 +55,16 @@ Dada una fórmula de la lógica proposicional verificar si se encuentra en forma
 *** CNF
 **** A CNF
 Dada una fórmula en NNF, dar su CNF, tal que sean lógicamente equivalentes.
+Ejemplos:
+ * Main> toCNF $ Oimp (Oneg $ Oand (Var 1)(Var 2)) (Oor (Var 3)(Oneg $ Top))
+ Oand (Oor (Var 1) (Oor (Var 3) Bot)) (Oor (Var 2) (Oor (Var 3) Bot))
+ * Main> toCNF $ Oneg $ Oor (Oimp (Var 1) (Var 2)) (Oor (Var 3) (Var 4))
+Oand (Oand (Var 1) (Oneg (Var 2))) (Oand (Oneg (Var 3)) (Oneg (Var 4)))
+
+Punto extra por la función $cnf :: PL -> PL$ la cual toma cualquier fórmula de la PL y regresa su CNF. 
 
 **** Es CNF
-Dada una fórmula de la lógica proposicional revisa si se encuentra en forma normal conjutiva.
+Dada una fórmula de la lógica proposicional revisa si se encuentra en forma normal conjuntiva.
 Ejemplos:
  * Main> esCNF (Oimp (Var 1) (Oand (Var 2)(Oor (Var 3)(Var 4))))
  False
@@ -65,6 +72,9 @@ Ejemplos:
  True
 
 *** DNF 
+**** A DNF 
+Dada una fórmula en 
+
 **** Es término
 Dada una fórmula de la lógica proposicional revisa si es un término. 
 Ejemplos:
@@ -74,7 +84,7 @@ Ejemplos:
  True
 
 **** Es DNF
-Dada una fórmula de la LP revisa si se encuentra en forma normal disyuntiva
+Dada una fórmula de la lógica proposicional revisa si se encuentra en forma normal disyuntiva.
 Ejemplos:
  * Main> esDNF (Oor (Oand (Var 2) (Oneg $ Var 2))(Oand (Var 4)(Oand (Var 5)(Var 7)))) 
  True
@@ -84,10 +94,33 @@ Ejemplos:
 ** Semántica
 *** Satisfacibilidad con modelos
 Dado un modelo y una fórmula de la lógica proposicional se debe indicar si es satisfacible. 
+Ejemplos:
  * Main> satMod [1] (Oimp (Var 1)(Var 2))
  False
  * Main> satMod [1,2] (Oand (Var 1) (Oor (Var 2) (Var 3)))
- True 
+ True
+
+*** Fórmula satisfacible
+Dada una formula de la lógica proposicional indicar si es satisfacible.
+Ejemplos:
+ * Main> esSatPL $ Oand (Var 1) (Oneg $ Var 1)
+ False
+ * Main> esSatPL $ Oimp (Oand (Var 1)(Var 2)) (Oor (Var 3) (Oneg $ Var 4))
+ True
+
+*** Fórmula valida
+Dada una fórmula de la lógica proposicional indicar si es valida.
+Ejemplos:
+ * Main> esValPL (Oand (Var 1) (Oor (Var 2) (Var 3)))
+ False
+ * Main> esValPL (Oor (Var 1) (Oor (Oneg $ Var 2) (Var 3)))
+ True
+
+*** Preguntas
+Las respuestas deben estar en el archivo README.
+1. Describe la diferencia entre una fórmula satisfacible y una valida. 
+2. Explica como se utiliza el algoritmo de indices complementarios para comprobar que las fórmulas en DNF son satisfacibles.
+3. Menciona dos algoritmos que   
 
 ** Deducción Natural
 *** Reglas faltantes

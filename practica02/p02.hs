@@ -3,7 +3,7 @@ module Practica2
 where
 
 import SintaxisPL
-
+import Data.List (nub)
 -- Tipo de datos para modelos
 type Modelo = [Indice]
 
@@ -69,7 +69,25 @@ esClausula phi = case phi of
 esCNF :: PL -> Bool
 esCNF phi = case phi of
   Oand alpha beta -> esCNF alpha && esCNF beta
-  _ -> esClausula phi 
+  _ -> esClausula phi
+
+distr :: PL -> PL -> PL
+distr phi gam = case (phi,gam) of
+  (Oand alpha beta,_) -> Oand (distr alpha gam) (distr beta gam)
+  (_,Oand alpha beta) -> Oand (distr phi alpha) (distr phi beta)
+  (_,_) -> Oor phi gam
+
+toCNF :: PL -> PL
+toCNF phi = case phi of
+  Top -> Top
+  Bot -> Bot
+  Var n -> Var n
+  Oneg alpha -> Oneg (toCNF alpha)
+  Oand alpha beta -> Oand (toCNF alpha) (toCNF beta)
+  Oor alpha beta -> distr (toCNF alpha) (toCNF beta) 
+
+cnf :: PL -> PL
+cnf = toCNF . toNNF
 
 esTermino :: PL -> Bool
 esTermino phi = case phi of
@@ -85,3 +103,31 @@ esDNF :: PL -> Bool
 esDNF phi = case phi of
   Oor alpha beta -> esDNF alpha && esDNF beta
   _ -> esTermino phi
+
+genModels :: [Indice] -> [Modelo]
+genModels lv = powerSet lv
+
+esValPL :: PL -> Bool
+esValPL phi = and[satMod y phi |y <- powerSet(varsOf(phi))]
+
+esSatPL :: PL -> Bool
+esSatPL phi = or[satMod y phi | y <- powerSet(varsOf(phi))]
+
+ -- Función que nos da el conjunto potencia de un conjunto dado
+powerSet :: [t] -> [[t]]
+powerSet l  = case l of
+  []   -> [[]]
+  x:xs -> powerXS ++ [x:w | w <- powerXS] where
+    powerXS = powerSet xs
+
+varsOf :: PL -> [Indice]
+varsOf phi = case phi of
+ Top -> []
+ Bot -> []
+ Var p -> [p]
+ Oneg alpha -> case alpha of
+   Var n -> [-n]
+   _ -> varsOf alpha
+ Oand alpha beta -> nub $ (varsOf alpha) ++ (varsOf beta)
+ Oor alpha beta -> nub $ (varsOf alpha) ++ (varsOf beta)
+ Oimp alpha beta -> nub $ (varsOf alpha) ++ (varsOf beta)
