@@ -2,6 +2,7 @@
 #+LANGUAGE: es
 #+LATEX_HEADER: \usepackage[AUTO]{babel}
 #+LATEX_HEADER: \usepackage{fancyvrb}
+#+LATEX_HEADER: \usepackage[left=3cm]{geometry}
 #+OPTIONS: toc:nil
 #+DATE:
 #+AUTHOR: Dr. Miguel Carrillo Barajas \\
@@ -11,13 +12,12 @@
 #+TITLE: Lógica Computacional \\
 #+TITLE: Universidad Nacional Autónoma de México
 
-
 * Lógica proposicional
 
 Consideremos la siguiente representación de la lógica proposicional:
 
 #+begin_src haskell
--- Tipo de datos para indices de variables
+-- Tipo de datos para índices de variables
 type Indice = Int
 
 -- Tipo de datos para formulas de la PL
@@ -29,98 +29,117 @@ data PL = Top | Bot | Var Indice
 type Modelo = [Indice]
 #+end_src
 
-** Formas Normales
-*** Elimina implicaciones
+** Elimina implicaciones
+*** eliminaImp :: PL -> PL
 Dada una fórmula cambiar las instancias de las implicaciones.
+#+begin_src
  * Main> eliminaImp (Oimp (Var 1) (Var 2))
  Oor (Oneg $ Var 1) (Var 2)
- * Main> eliminaImp (Oand Top Bot)
+ * Main> eliminaImp (Oand Top Bot) 
  Oand Top Bot
+#+end_src
 
-*** NNF
-**** A NNF 
+** Forma normal negativa
+*** aNNF :: PL -> PL
 Dada una fórmula de la lógica proposicional se debe regresar su traducción a forma normal negativa.
- * Main> toNNF (Oimp (Oneg $ (Oand (Var 1)(Var 2))) (Oor (Var 3)(Oneg $ Top)))
+#+begin_src
+ * Main> aNNF (Oimp (Oneg $ (Oand (Var 1)(Var 2))) (Oor (Var 3)(Oneg $ Top))) 
  Oor (Oand (Var 1) (Var 2)) (Oor (Var 3) Bot)
- * Main> toNNF (Oand (Oneg $ (Oand (Var 1)(Var 2))) (Oneg $ Oor (Var 3)(Oneg $ Top)))
+ * Main> aNNF (Oand (Oneg $ (Oand (Var 1)(Var 2))) (Oneg $ Oor (Var 3)(Oneg $ Top))) 
  Oand (Oor (Oneg (Var 1)) (Oneg (Var 2))) (Oand (Oneg (Var 3)) Top)
+#+end_src
 
-**** Es NNF
+*** esNNF :: PL -> PL
 Dada una fórmula de la lógica proposicional verificar si se encuentra en forma normal negativa.
+#+begin_src
  * Main> esNNF (Oneg $ (Oand (Var 1) (Var 2)))
  False
  * Main> esNNF (Oor (Oneg $ Var 1)(Oneg $ Var 2))
  True
+#+end_src
 
-*** CNF
-**** A CNF
-Dada una fórmula en NNF, dar su CNF, tal que sean lógicamente equivalentes.
+** Forma normal conjuntiva
+*** aCNF :: PL -> PL
+Dada una fórmula en forma normal negativa, dar su forma normal conjuntiva, tal que sean lógicamente equivalentes.
 Ejemplos:
- * Main> toCNF $ Oimp (Oneg $ Oand (Var 1)(Var 2)) (Oor (Var 3)(Oneg $ Top))
+#+begin_src
+ * Main> aCNF $ Oimp (Oneg $ Oand (Var 1)(Var 2)) (Oor (Var 3)(Oneg $ Top)) 
  Oand (Oor (Var 1) (Oor (Var 3) Bot)) (Oor (Var 2) (Oor (Var 3) Bot))
- * Main> toCNF $ Oneg $ Oor (Oimp (Var 1) (Var 2)) (Oor (Var 3) (Var 4))
-Oand (Oand (Var 1) (Oneg (Var 2))) (Oand (Oneg (Var 3)) (Oneg (Var 4)))
+ * Main> aCNF $ Oneg $ Oor (Oimp (Var 1) (Var 2)) (Oor (Var 3) (Var 4))
+ Oand (Oand (Var 1) (Oneg (Var 2))) (Oand (Oneg (Var 3)) (Oneg (Var 4)))
+#+end_src
 
-Punto extra por la función $cnf :: PL -> PL$ la cual toma cualquier fórmula de la PL y regresa su CNF. 
+Punto extra por la función $cnf :: PL -> PL$ la cual toma cualquier fórmula de la lógica proposicional y regresa su forma normal conjuntiva. 
 
-**** Es CNF
+*** esCNF :: PL -> PL
 Dada una fórmula de la lógica proposicional revisa si se encuentra en forma normal conjuntiva.
 Ejemplos:
+#+begin_src
  * Main> esCNF (Oimp (Var 1) (Oand (Var 2)(Oor (Var 3)(Var 4))))
  False
- * Main> esCNF (Oand (Oor (Var 2) (Oneg $ Var 2))(Oor (Var 4)(Oor (Var 5)(Var 7)))) 
+ * Main> esCNF (Oand (Oor (Var 2) (Oneg $ Var 2))(Oor (Var 4)(Oor (Var 5)(Var 7))))
  True
+#+end_src
 
-*** DNF 
-**** A DNF 
-Dada una fórmula en 
-
-**** Es término
+** Formal normal disyuntiva
+*** esTermino :: PL -> PL
 Dada una fórmula de la lógica proposicional revisa si es un término. 
 Ejemplos:
- * Main> esTermino $ Oand (Var 1) (Oor (Var 2) (Var 3))
+#+begin_src
+ * Main> esTermino $ Oand (Var 1) (Oor (Var 2) (Var 3)) 
  False
  * Main> esTermino $ Oand (Oand (Var 1) (Var 2)) (Oneg $ Var 3)
  True
+#+end_src
 
-**** Es DNF
+*** esDNF :: PL -> PL
 Dada una fórmula de la lógica proposicional revisa si se encuentra en forma normal disyuntiva.
 Ejemplos:
+#+begin_src
  * Main> esDNF (Oor (Oand (Var 2) (Oneg $ Var 2))(Oand (Var 4)(Oand (Var 5)(Var 7)))) 
  True
  * Main> esDNF (Oor (Oand (Var 2) (Oneg $ Var 2))(Oand (Var 4)(Oor (Var 5)(Var 7))))
  False
+#+end_src
 
 ** Semántica
-*** Satisfacibilidad con modelos
+*** satMod :: Modelo -> PL -> Bool
 Dado un modelo y una fórmula de la lógica proposicional se debe indicar si es satisfacible. 
 Ejemplos:
+#+begin_src
  * Main> satMod [1] (Oimp (Var 1)(Var 2))
  False
  * Main> satMod [1,2] (Oand (Var 1) (Oor (Var 2) (Var 3)))
  True
+#+end_src
 
-*** Fórmula satisfacible
+*** esSatPL :: PL -> Bool
 Dada una formula de la lógica proposicional indicar si es satisfacible.
 Ejemplos:
+#+begin_src
  * Main> esSatPL $ Oand (Var 1) (Oneg $ Var 1)
  False
  * Main> esSatPL $ Oimp (Oand (Var 1)(Var 2)) (Oor (Var 3) (Oneg $ Var 4))
  True
+#+end_src
 
-*** Fórmula valida
+*** esValPL :: PL -> Bool
 Dada una fórmula de la lógica proposicional indicar si es valida.
 Ejemplos:
+#+begin_src
  * Main> esValPL (Oand (Var 1) (Oor (Var 2) (Var 3)))
  False
  * Main> esValPL (Oor (Var 1) (Oor (Oneg $ Var 2) (Var 3)))
  True
+#+end_src
 
 *** Preguntas
 Las respuestas deben estar en el archivo README.
 1. Describe la diferencia entre una fórmula satisfacible y una valida. 
-2. Explica como se utiliza el algoritmo de indices complementarios para comprobar que las fórmulas en DNF son satisfacibles.
-3. Menciona dos algoritmos que   
+2. Explicá como se utiliza el algoritmo de índices complementarios para comprobar que las fórmulas en forma normal disyuntiva son satisfacibles.
+3. Indicá si las siguientes fórmulas son satisfacibles y explica como se llego a dicha conclusión:
+ * $(p \land q \land s \rightarrow p) \land (p \land r \rightarrow p) \land (p \land s \rightarrow s)$
+ * $(p \land q \land s \rightarrow \bot) \land (q \land r \rightarrow \bot) \land (s \rightarrow \bot)$ 
 
 ** Deducción Natural
 *** Reglas faltantes
@@ -133,4 +152,10 @@ En el archivo DeduccionNatural.hs implementar las siguientes funciones:
 
 *** Ejercicios
 
-Dar la deducción de los siguientes ejercicios
+Dar la deducción de los siguientes ejercicios:
+
+1. $p, \neg \neg (q \land r) \vdash \neg \neg p \land r$
+2. $p \land q \rightarrow r \vdash p \rightarrow (q \rightarrow r)$
+3. $q \rightarrow r \vdash p \lor q \rightarrow p \lor r$
+4. $p \land (q \lor r) \vdash (p \land q) \lor (p \land r)$
+5. $(p \land q) \lor (p \land r) \vdash  p \land (q \lor r)$
